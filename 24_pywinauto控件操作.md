@@ -65,7 +65,7 @@ wechat_window.print_control_identifiers(depth=None, filename='微信结构.txt')
 
 ### 控件常用的方法属性
 
-上节课我们玩转了最常用的两个方法:
+上一篇我们玩转了最常用的两个方法:
 
 - `ctrl.click_input()` - 最常用的点击方法
 - `ctrl.type_keys()` - 键盘输入方法
@@ -290,7 +290,7 @@ if __name__ == '__main__':
 </details>
 ## 文档总结
 
-本节课我们学习了pywinauto的控件操作方法，包括：
+本文档我们学习了pywinauto的控件操作方法，包括：
 - 打印控件树结构
 - 控件的点击、输入、右键等操作
 - 获取控件属性

@@ -591,7 +591,7 @@ print(soup.find(id="link2"))  # 查找id为link2的元素
 
 ## 文档总结
 
-本节课我们学习了两个重要的爬虫库：
+本文档我们学习了两个重要的爬虫库：
 
 1. **Requests库**：用于发送HTTP请求，支持GET、POST等方法，可以处理SSL认证、代理IP、用户认证等功能
 2. **BeautifulSoup库**：用于解析HTML文档，提供了简单直观的API来提取网页数据

@@ -249,7 +249,7 @@ dlg.wait_not(wait_for_not, timeout=None, retry_interval=None)  # 等待窗口不
 
 ## 文档总结
 
-本节课我们学习了pywinauto的基础知识，包括：
+本文档我们学习了pywinauto的基础知识，包括：
 - pywinauto的安装和backend选择
 - 如何使用inspect工具查看控件
 - 创建实例化对象的两种方式（start和connect）
