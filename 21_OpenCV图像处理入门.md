@@ -459,7 +459,7 @@ cv.waitKey(0)
 cv.destroyAllWindows()
 ```
 
-## 课程总结
+## 文档总结
 
 本节课我们学习了OpenCV的基础知识，包括：
 - OpenCV的安装和基本使用
@@ -472,7 +472,7 @@ cv.destroyAllWindows()
 
 这些知识将为我们后续的游戏自动化开发打下坚实的基础。
 
-## 课后习题
+## 练习题
 
 1. （单选题）OpenCV读取图像的函数是：
    - A. `cv.read()`

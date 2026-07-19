@@ -1,6 +1,6 @@
 # 访问数据库
 
-## 🎯 课前回顾
+## 🎯 内容回顾
 
 学完不练等于白学，动手试试！
 
@@ -120,7 +120,7 @@ c.execute("delete from persons;")
 c.execute("INSERT INTO persons(id,name,age,address,salary) VALUES(1,'张三',32,'北京',50000.00)")
 c.execute("INSERT INTO persons(id,name,age,address,salary) VALUES(2,'李四',25,'上海',15000.00)")
 c.execute("INSERT INTO persons(id,name,age,address,salary) VALUES(3,'王五',23,'深圳',20000.00)")
-c.execute("INSERT INTO persons(id,name,age,address,salary) VALUES(4,'霸夫',35,'长沙',60000.00)")
+c.execute("INSERT INTO persons(id,name,age,address,salary) VALUES(4,'渣男教父',25,'长沙',60000.00)")
 #  必须提交才能生效
 conn.commit()  # 提交事务
 print("插入数据成功")
@@ -208,7 +208,7 @@ try:
     # ?-占位符，在cour.execute()参数中，传入数据元组
     sql = 'select * from persons where name=?'
     # 构建数据元组
-    name = ('霸夫',)
+    name = ('渣男教父',)
     # 执行sql语句
     cour.execute(sql, name)
     # 打印查询结果
@@ -220,7 +220,7 @@ try:
 except Error as e:
     print('连接失败')
 
-cursor.execute('SELECT name,age,address,salary from persons where name=?', ('霸夫',))
+cursor.execute('SELECT name,age,address,salary from persons where name=?', ('渣男教父',))
 ```
 
 #### 增加数据 INSERT
@@ -334,7 +334,7 @@ try:
     # ?-占位符，在cour.execute()参数中，传入数据元组
     sql = 'update persons set salary=? where name=?'
     # 构建数据元组
-    p_data = (106000, '霸夫')
+    p_data = (106000, '渣男教父')
     # 执行sql语句
     cour.execute(sql, p_data)
     # 提交数据-同步到数据库文件-增删改查，除了查询以外有需要进行提交
@@ -435,13 +435,13 @@ except Error as e:
 
 如何才能确保出错的情况下也关闭掉Connection 对象和Cursor 对象呢？请回忆 try:...except:...finally:... 的用法。
 
-## 课程总结
+## 文档总结
 
-数据库是编程中数据存取时经常用到的，这节课我们通过SQLite这个非常方便的本地存储数据库，学习了关系型数据库的概念和数据库的连接、表的创建、记录查询和关闭连接。
+数据库是编程中数据存取时经常用到的，这篇文档我们通过SQLite这个非常方便的本地存储数据库，学习了关系型数据库的概念和数据库的连接、表的创建、记录查询和关闭连接。
 
 虽然SQLite非常小巧但却非常实用，所使用SQL语句也是通用的。我们学习了增（Insert）、删（delete）、查（select）、改（update）这四个关键语句后，已经能够帮助我们实现大部分的数据操作需求了。希望大家结合之前课程的内容，多多动手练习编码，掌握好 Python 的基础，为后面实战内容奠定坚实的基础。
 
-## 课后习题
+## 练习题
 
 ### 选择题（单选）
 
@@ -458,7 +458,7 @@ except Error as e:
 - D、DELETE
 
 3、要查询课堂示例数据库的persons表中张三的工资，cursor表示游标对象，下面那句语句可以完成？
-- A、`cursor.execute('SELECT salary from persons where name=?', ('霸夫',))`
+- A、`cursor.execute('SELECT salary from persons where name=?', ('渣男教父',))`
 - B、`cursor.execute('SELECT salary from persons where name=?', ('张三'))`
 - C、`cursor.execute('SELECT salary from persons where id=?', ('张三',))`
 - D、`cursor.execute('SELECT salary from persons where name=?', ('张三',))`
@@ -479,7 +479,7 @@ except Error as e:
 | (1, '张三', 96, 96, 98, 0) |
 | (2, '李四', 94, 95, 90, 0) |
 | (3, '王五', 90, 92, 95, 0) |
-| (4, '霸夫', 97, 100, 96, 0) |
+| (4, '渣男教父', 97, 100, 96, 0) |
 
 要求：利用代码在students.sqlite数据库下创建一张students表，表包含 id（INT类型，主键）、name（TEXT类型）、chn（INT类型）、math（INT类型）、eng（INT类型）、total（INT类型）六列，使用代码插入上面4行数据，然后更新表中所有人的total，total= chn + math + eng，最终数据库中students表数据如下图：
 

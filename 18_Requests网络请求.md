@@ -589,7 +589,7 @@ print(soup.find(id="link2"))  # 查找id为link2的元素
 <a href="http://www.youbafu.com/c/" id="link2">c语言教程</a>
 ```
 
-## 课程总结
+## 文档总结
 
 本节课我们学习了两个重要的爬虫库：
 
@@ -598,7 +598,7 @@ print(soup.find(id="link2"))  # 查找id为link2的元素
 
 Requests库让网络请求变得简单优雅，而BS4则让数据提取变得轻松自如。两者结合使用，可以完成大部分的网页数据抓取任务。
 
-## 课后习题
+## 练习题
 
 ### 选择题（单选）
 

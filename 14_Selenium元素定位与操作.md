@@ -259,7 +259,7 @@ deselect_by_visible_text    # 取消已选中的文本值
 <html>
 <body align="center">
 <form>
-<select name="训练营">
+<select name="教程">
 <option value="1">第一期</option>
 <option value="2" selected="">第二期</option>
 <option value="3">第三期</option>
@@ -270,7 +270,7 @@ deselect_by_visible_text    # 取消已选中的文本值
 </html>
 ```
 
-保存后，把文件名修改为：渣男教父训练营.html。
+保存后，把文件名修改为：渣男教父教程.html。
 
 现在来演示下拉框的不同选择的方式：
 
@@ -285,16 +285,16 @@ s = Service(r'D:\driver\chromedriver.exe')
 # 初始化浏览器为chrome浏览器
 browser = webdriver.Chrome(service=s)
 # 访问本地网页
-browser.get(r'file:///E:/渣男教父训练营.html')
+browser.get(r'file:///E:/渣男教父教程.html')
 time.sleep(2)
 # 根据索引选择
-Select(browser.find_element(By.NAME, "训练营")).select_by_index("2")
+Select(browser.find_element(By.NAME, "教程")).select_by_index("2")
 time.sleep(2)
 # 根据value值选择
-Select(browser.find_element(By.NAME, "训练营")).select_by_value("4")
+Select(browser.find_element(By.NAME, "教程")).select_by_value("4")
 time.sleep(2)
 # 根据文本值选择
-Select(browser.find_element(By.NAME, "训练营")).select_by_visible_text("第二期")
+Select(browser.find_element(By.NAME, "教程")).select_by_visible_text("第二期")
 time.sleep(2)
 # 关闭浏览器
 browser.quit()
@@ -540,10 +540,10 @@ browser.quit()
 
 ![Image 7](./images/chapter14_07.png)
 
-## 课程总结
+## 文档总结
 
 本节课学习了获取元素属性，多窗口切换，页面交互操作和模拟鼠标、键盘操作这些基本的功能，我们为每一个功能都编写了一个案例，先模仿再修改，多写多练，加深记忆。
 
-## 课后习题
+## 练习题
 
 1. （编程题）模仿示例打开网址 https://pan.baidu.com/ ，模拟完成输入账号，密码，点击登录的流程。测试账号： 123456@qq.com ，密码 ：123456。

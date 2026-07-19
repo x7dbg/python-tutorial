@@ -247,7 +247,7 @@ dlg.wait_not(wait_for_not, timeout=None, retry_interval=None)  # 等待窗口不
 # * 'enabled' means that the window is not disabled
 ```
 
-## 课程总结
+## 文档总结
 
 本节课我们学习了pywinauto的基础知识，包括：
 - pywinauto的安装和backend选择
@@ -256,7 +256,7 @@ dlg.wait_not(wait_for_not, timeout=None, retry_interval=None)  # 等待窗口不
 - 如何选择窗口
 - 窗口的常用方法
 
-## 课后习题
+## 练习题
 
 1. （单选题）pywinauto中用于连接已启动程序的函数是：
    - A. `start()`

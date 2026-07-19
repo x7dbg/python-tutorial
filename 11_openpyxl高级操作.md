@@ -450,7 +450,7 @@ style参数的种类：'double', 'mediumDashDotDot', 'slantDashDot', 'dashDotDot
 
 ![Image 8](./images/chapter11_08.png)
 
-## 课程总结
+## 文档总结
 
 本节课我们进一步了解更多获取表格数据的方法，如 sheet.iter_cols、sheet.rows和 sheet.columns。获取表格数据方法有多种，在不同的应用场景下选择不同的方法可以使用我们达到想要的效果。
 
@@ -607,6 +607,6 @@ if __name__ == '__main__':
         raise  # 抛出错误，便于定位出错点
 ```
 
-## 课后习题
+## 练习题
 
 按课程中【明细.xlsx】里的（类型）生成类型分类明细，保存到 【分类-类型.xlsx】中。【分类-类型.xlsx】中包含多个sheet表，每个表保存一个类型的使用数据，sheet表名为类型名。
