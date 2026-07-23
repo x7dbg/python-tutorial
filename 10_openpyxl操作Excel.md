@@ -1,125 +1,186 @@
-# 自动化操作 Excel
+# 📊 自动化操作 Excel——让表格处理飞起来
 
-## openpyxl 简介
+## 🎯 上集回顾
 
-### 安装openpyxl库
+上篇文章我们学习了数据库操作，掌握了如何使用 SQLite 存储和管理数据。这项技能在数据持久化方面非常强大，但有时候我们的数据来源可能是 Excel 文件，或者需要将数据导出为 Excel 格式进行分享。
 
-Python要操作Excel表格，需要用到第三方库。虽然能操作excel的库有很多，本次学习我们使用到的是openpyxl库。
+今天，我们就来学习如何使用 Python 操作 Excel，让表格处理自动化、智能化！
 
-要使用openpyxl的第一步就是先安装它。在Pycharm下方终端（英文：Terminal）中输入`pip install openpyxl` 回车就会自动安装了。
+## 🚀 openpyxl 简介
 
-当你看到Successfully字样的时候说明你安装成功了。
+### 🎁 为什么选择 openpyxl？
 
-### 认识Excel窗口
+Python 能操作 Excel 的库有很多：
 
-安装好openpyxl库后我们就可以开始操作Excel表格了。在操作Excel表之前我们要先明确下Excel中一些简单的术语。我们认真查看下图中的每一项描述，明确下行（row），列（column）,单元格（cell），坐标（coordinate）与表（sheet）的概念。
+| 库名 | 特点 | 适用场景 |
+|------|------|----------|
+| **openpyxl** ⭐ | 功能强大，支持读写 .xlsx 格式 | 日常办公自动化 |
+| xlrd/xlwt | 老牌库，只能读/写 .xls | 旧版 Excel 文件 |
+| pandas | 数据分析神器，可读写 Excel | 大数据处理 |
+| xlwings | 调用 Excel 程序，保留公式 | 需要复杂公式计算 |
 
-这里还要注意一点，在Excel中是从1开始计数的，并不是像程序编码中0开始，这点很重要。比如图中 【后羿】标出来的格子对应的单元格是B4，B4就是它的坐标。
+> 💡 **推荐**：对于大多数场景，`openpyxl` 是最佳选择！
+
+---
+
+### 📦 安装 openpyxl
+
+```bash
+pip install openpyxl
+```
+
+安装成功后，你会看到 `Successfully installed openpyxl` 提示。
+
+---
+
+### 📐 Excel 核心概念
+
+在操作 Excel 之前，我们先来认识几个核心概念：
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    Excel 结构层次图                              │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  📒 工作簿 (Workbook)                                           │
+│  └── 一个 Excel 文件就是一个工作簿                                │
+│      │                                                          │
+│      ├── 📄 工作表 1 (Sheet) - 花名册                            │
+│      │   ├── 📊 行 (Row) - 横向，用数字 1, 2, 3... 表示           │
+│      │   ├── 📊 列 (Column) - 纵向，用字母 A, B, C... 表示       │
+│      │   └── 🔲 单元格 (Cell) - 行和列的交叉点                   │
+│      │       └── 坐标 (Coordinate) - 如 B4 表示第2列第4行         │
+│      │                                                          │
+│      └── 📄 工作表 2 (Sheet) - 成绩单                            │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+**⚠️ 重要提醒**：
+- Excel 的索引从 **1** 开始（不是从 0 开始！）
+- 列用字母表示：A, B, C... Z, AA, AB...
+- 行用数字表示：1, 2, 3...
+- 单元格坐标格式：**列字母 + 行数字**，如 B4
 
 ![Image 1](./images/chapter10_01.jpeg)
 
-### 打开Excel
+> 🌰 **示例**：图中【后羿】所在的位置是 **B4**，表示第 **B** 列第 **4** 行。
 
-openpyxl目前支持的文件格式为 .xlsx / .xlsm / .xltx / .xltm。如果是xls文件格式的文件，数量少可以手动另存为.xlsx格式，如果数量多则可以通过pywin32库将其批量转化为.xlsx文件，这里暂时不详细说了，有兴趣的可以去星球中查看相应问文章。
+---
 
-接下来教大家如何打开一个.xlsx文件，示例文件在D盘根目录下名为王者小学.xlsx, 表格中内容如下：
+### 📂 打开 Excel 文件
+
+**支持的文件格式**：`.xlsx` / `.xlsm` / `.xltx` / `.xltm`
+
+> ⚠️ **注意**：`.xls` 格式（旧版 Excel）需要先转换为 `.xlsx` 才能使用 openpyxl
+
+**示例文件**：`王者小学.xlsx`，包含两个工作表：
 
 ![Image 2](./images/chapter10_02.png)
 
-打开文件的代码如下：
+**代码示例**：
 
 ```python
 from openpyxl import load_workbook
 
-filePath = r'D:\王者小学.xlsx'  # 文件路径
-workbook = load_workbook(filePath)  # 打开excel文件
-print(workbook.sheetnames)  # 打印excel中的表格（sheet）名
+# 文件路径（r 前缀表示原始字符串，避免转义问题）
+filePath = r'D:\王者小学.xlsx'
+
+# 打开 Excel 文件
+workbook = load_workbook(filePath)
+
+# 查看所有工作表名称
+print(workbook.sheetnames)
 ```
 
 ![Image 3](./images/chapter10_03.png)
 
-运行结果如下：
-
+**运行结果**：
 ```
 ['花名册', '成绩单']
 ```
 
-从上面的代码可以看出，打开excel文件用到函数是load_workbook，只需要将文件的路径传入函数，就可以打开excel文件了。这里需要注意一点，load_workbook只能打开已经存在的excel文件，不能创建新的工作簿。
+> 💡 **关键函数**：`load_workbook(filepath)`
+> - 作用：加载已存在的 Excel 文件
+> - 参数：文件路径（字符串）
+> - 返回：Workbook 对象
+> - ⚠️ 只能打开已存在的文件，不能创建新文件
 
-这里再阐述一个工作簿（workbook）的概念，打开excel函数load_workbook的名称翻译为中文就是载入工作簿，所以我们也可以认为一个excel就是一个工作簿。
+---
 
-简而言之，一个Excel工作簿（workbook）是由一个或是多个表sheet组成。一个sheet可以看作是多行row或是多列column组成，而每一行或每一列则是由多个单元格cell组成。
+## 📖 获取 Excel 数据
 
-## 获取Excel数据
+### 🎯 获取工作表（Sheet）
 
-### 获取表格
+一个 Excel 文件可以包含多个工作表，获取工作表有三种常用方法：
 
-从上面打开的excel文件可以看出，一个excel文件中可以有多个表。像王者小学.xlsx 这个文件里就有【花名册】和【成绩单】两个表格。
+| 方法 | 语法 | 说明 |
+|------|------|------|
+| **通过名称** | `workbook['表名']` | 最常用，直观明了 |
+| **通过索引** | `workbook.worksheets[索引]` | 索引从 0 开始 |
+| **获取活动表** | `workbook.active` | 获取当前打开时显示的表 |
 
-一般而言我们操作的都是第一个表，而获取表的方法也多种，常用的有三种:
-
-1. `workbook[表格名]`：通过传入相应的表格名来获取对应的表数据；
-2. `workbook.worksheets[索引]`：通过索引从workbook.worksheets中获取对应的表数据；
-3. `workbook.active`：获取当前活动的工作表
-
-直接看代码看看：
+**代码示例**：
 
 ```python
 from openpyxl import load_workbook
 
-filePath = r'D:\王者小学.xlsx'  # 文件路径
-workbook = load_workbook(filePath)  # 打开excel文件
-print(workbook.sheetnames)  # 打印excel中的表格（sheet）名
+filePath = r'D:\王者小学.xlsx'
+workbook = load_workbook(filePath)
 
-sheet = workbook["花名册"]  # 根据表名获取表格
-sheet2 = workbook.worksheets[0]  # 根据索引在worksheets中获取表格
-sheet3 = workbook.active  # 获取当前活跃的表
+# 方法1：通过表名获取
+sheet1 = workbook["花名册"]
 
-print(sheet)
-print(sheet2)
-print(sheet3)
+# 方法2：通过索引获取（从0开始）
+sheet2 = workbook.worksheets[0]  # 第一个表
+
+# 方法3：获取当前活动表
+sheet3 = workbook.active
+
+print(f"方法1: {sheet1}")
+print(f"方法2: {sheet2}")
+print(f"方法3: {sheet3}")
 ```
 
-运行结果如下：
-
+**运行结果**：
 ```
-['花名册', '成绩单']
-<Worksheet "花名册">
-<Worksheet "花名册">
-<Worksheet "成绩单">
+方法1: <Worksheet "花名册">
+方法2: <Worksheet "花名册">
+方法3: <Worksheet "成绩单">
 ```
 
-我们可以看到 `workbook["花名册"]` 与 `workbook.worksheets[0]` 都可以得到【花名册】对应的表数据，而当前活动的表格是【成绩单】，所以`workbook.active`返回的是【成绩单】。
+> 💡 **提示**：
+> - `workbook["花名册"]` 和 `workbook.worksheets[0]` 获取的是同一个表
+> - `workbook.active` 获取的是 Excel 打开时默认显示的表
 
-### 获取表格的尺寸大小
+---
 
-学习了获取到表格后，我们就可以来获取到表格对应的尺寸大小了。这里说的尺寸指的是excel表格中的数据有几行几列，前面我们有提到一个excel可以包含多个表，所以不同的sheet包含的尺寸可能都是不一样的。
+### 📏 获取表格尺寸
 
-王者小学.excel 中有两个表，内容如下：
-
-如何获取两个表的尺寸呢，很简单，先获取表，然后调用`表.dimensions`即可，我们上代码看看：
+使用 `sheet.dimensions` 可以获取表格的数据范围：
 
 ```python
 from openpyxl import load_workbook
 
-filePath = r'D:\王者小学.xlsx'  # 文件路径
-workbook = load_workbook(filePath)  # 打开excel文件
-print(workbook.sheetnames)  # 打印excel中的表格（sheet）名
+filePath = r'D:\王者小学.xlsx'
+workbook = load_workbook(filePath)
 
-sheet = workbook["花名册"]  # 根据表名获取表格
-sheet2 = workbook.worksheets[1]  # 根据索引在worksheets中获取表格
+sheet1 = workbook["花名册"]
+sheet2 = workbook["成绩单"]
 
-print(sheet, sheet.dimensions)
-print(sheet2, sheet2.dimensions)
+print(f"花名册: {sheet1.dimensions}")
+print(f"成绩单: {sheet2.dimensions}")
 ```
 
-运行结果：
+**运行结果**：
+```
+花名册: A1:C5
+成绩单: A1:D5
+```
 
-```
-['花名册', '成绩单']
-<Worksheet "花名册"> A1:C5
-<Worksheet "成绩单"> A1:D5
-```
+**含义解析**：
+- `A1:C5` = 从 A1 单元格到 C5 单元格的数据区域
+- `A1:D5` = 从 A1 单元格到 D5 单元格的数据区域
 
 ![Image 4](./images/chapter10_04.png)
 
@@ -127,504 +188,827 @@ print(sheet2, sheet2.dimensions)
 
 ![Image 6](./images/chapter10_06.png)
 
-从结果可以看出：【花名册】的尺寸是表示A列第1行到C列第5行这个区域，而成绩单的尺寸是表示A列第1行到D列第5行这个区域，这个与上面图中表格数据尺寸是一致的。
+> 💡 **尺寸格式**：`左上角坐标:右下角坐标`
+> - 如 `A1:C5` 表示 A 列到 C 列，第 1 行到第 5 行的区域
 
-### 获取单元格数据
+---
 
-上一节我们学习了如何获取表的尺寸，这一节我们来学习下如何获取表中单元格对应的数据。众所周知每个单元格都是有坐标的。比如花名册中【李白】这个单元格坐标是B2，后羿的数据成绩【96】对应的单元格坐标是C4。我们通过代码如何得到这两个数据呢？
+### 🔲 获取单元格数据
 
-很简单，只要获取到工作表后，通过坐标来进行索引就能获取到对应的单元格，然后调用单元格.value就可以获得对应单元格内的数据了。格式如下：
+获取单元格数据有两种常用方法：
 
-- `sheet[单元格坐标]`能获取到表格中对应单元格的对象；
-- `sheet[单元格坐标].value` 则是能获取对应单元格中的值。
+| 方法 | 语法 | 适用场景 |
+|------|------|----------|
+| **坐标法** | `sheet['B2']` | 知道单元格坐标时 |
+| **行列法** | `sheet.cell(row=2, column=2)` | 需要循环遍历时 |
 
-我们上代码看看：
+**代码示例**：
 
 ```python
 from openpyxl import load_workbook
 
-filePath = r'D:\王者小学.xlsx'  # 文件路径
-workbook = load_workbook(filePath)  # 打开excel文件
+filePath = r'D:\王者小学.xlsx'
+workbook = load_workbook(filePath)
 
-sheet = workbook["花名册"]  # 根据表名获取表格
-sheet2 = workbook.worksheets[1]  # 根据索引在worksheets中获取表格
+sheet = workbook["花名册"]
+sheet2 = workbook["成绩单"]
 
-print(sheet["B2"])  # 获取sheet的B2单元格的对象
-print(sheet2["C4"])  # 获取sheet2的C4单元的对象
-print(sheet["B2"].value)  # 获取sheet的B2单元格中的值
-print(sheet2["C4"].value)  # 获取sheet2的C4单元格中的值
+# 方法1：通过坐标获取
+cell1 = sheet["B2"]
+print(f"单元格对象: {cell1}")
+print(f"单元格值: {cell1.value}")
+
+# 方法2：通过行列获取（B2 = 第2行第2列）
+cell2 = sheet.cell(row=2, column=2)
+print(f"单元格值: {cell2.value}")
+
+# 获取后羿的成绩（C4 = 第4行第3列）
+score = sheet2.cell(row=4, column=3).value
+print(f"后羿的成绩: {score}")
 ```
 
 ![Image 7](./images/chapter10_07.png)
 
 ![Image 8](./images/chapter10_08.png)
 
-运行结果：
-
+**运行结果**：
 ```
-<Cell '花名册'.B2>
-<Cell '成绩单'.C4>
-李白
-96
+单元格对象: <Cell '花名册'.B2>
+单元格值: 李白
+单元格值: 李白
+后羿的成绩: 96
 ```
 
-除了上面我们通过`sheet[单元格坐标]`获取单元格，还有另一种获取单元格数据的方法。这里我们先回顾下excel的一些基础知识，单元格数据除了坐标的方式来定位，我们还可以用行列来找到它，比如B2对应的是第2行第2列（row=2,column=2）, C4对应的是第4行第3列（row=4, column=3)。
+> 💡 **总结**：
+> - `sheet['B2']` → 获取单元格对象
+> - `sheet['B2'].value` → 获取单元格的值
+> - `sheet.cell(row=2, column=2)` → 通过行列获取（行、列从1开始）
 
-理清楚单元格的行列后，我们可以通过`sheet.cell(row=, column=)` 这个函数来获取单元格的对象了。我们看下代码：
+---
+
+### 📊 获取区域数据
+
+#### 方法1：使用 `sheet[]`（切片语法）
 
 ```python
 from openpyxl import load_workbook
 
-filePath = r'D:\王者小学.xlsx'  # 文件路径
-workbook = load_workbook(filePath)  # 打开excel文件
+filePath = r'D:\王者小学.xlsx'
+workbook = load_workbook(filePath)
+sheet = workbook["花名册"]
 
-sheet = workbook["花名册"]  # 根据表名获取表格
-sheet2 = workbook.worksheets[1]  # 根据索引在worksheets中获取表格
+# 获取矩形区域
+cells = sheet["A1:C4"]  # 从A1到C4的区域
 
-cell = sheet.cell(row=2, column=2)  # 获取B2的数据
-cell2 = sheet2.cell(row=4, column=3)  # 获取C4的数据
-
-print(cell, cell.value)  # 获取B2单元格中的值
-print(cell2, cell2.value)  # 获取C4单元格中的值
+for row in cells:       # 按行遍历
+    for cell in row:    # 遍历行中的每个单元格
+        print(cell.value)
 ```
 
-运行结果：
-
+**运行结果**：
 ```
-<Cell '花名册'.B2> 李白
-<Cell '成绩单'.C4> 96
-```
-
-可以看到，我们通过这种方式也成功获取到了对应单元格的值。
-
-来总结一下，我们可以通过`sheet[单元格坐标]` 或 `sheet.cell(row=, column=)` 方法来获取对应的单元格cell，要得到cell中的值只需要调用`cell.value`即可。
-
-### 获取区域单元格数据
-
-#### sheet[]方法
-
-前面我们学习了用`sheet[单元格坐标]`来获取单个单元格的对象，那么我们要读取某个区域内的单元格数据该怎么办呢？
-
-其实很简单，还是用`sheet[]`方法。我们先看下【花名册】这个表有数据的区域，是从A1到C4这个范围。获取单个单元格我们是传入坐标如"B2"，那么我们要获取整个表里的数据也很简单，就是传入左上角坐标跟右下角坐标拼接的字符串，格式如 `sheet["A1:C4"]`，我们看下代码：
-
-```python
-from openpyxl import load_workbook
-
-filePath = r'D:\王者小学.xlsx'  # 文件路径
-workbook = load_workbook(filePath)  # 打开excel文件
-
-sheet = workbook["花名册"]  # 根据表名获取表格
-cells = sheet["A1:C4"]  # 获取A1:C4区域的数据
-
-for i in cells:
-    print(i)
-    for j in i:
-        print(j.value)
-```
-
-运行下看看：
-
-```
-(<Cell '花名册'.A1>, <Cell '花名册'.B1>, <Cell '花名册'.C1>)
 学号
 姓名
 性别
-(<Cell '花名册'.A2>, <Cell '花名册'.B2>, <Cell '花名册'.C2>)
 1
 李白
 男
-(<Cell '花名册'.A3>, <Cell '花名册'.B3>, <Cell '花名册'.C3>)
-2
-甄姬
-女
-(<Cell '花名册'.A4>, <Cell '花名册'.B4>, <Cell '花名册'.C4>)
-3
-后羿
-男
+...
 ```
 
-从打印的结果可以看出，cells中的数据是按行读取的。
+**常用切片方式**：
 
-通过`sheet["坐标:坐标2"]`获取区域内单元格的数据，它返回的是一个区域内的数据。其实我们还可以通过`sheet[]`方法获取某行或某列的数据，格式如下：
+| 语法 | 说明 | 示例 |
+|------|------|------|
+| `sheet['A1:C4']` | 获取矩形区域 | A1到C4的所有单元格 |
+| `sheet['A']` | 获取整列 | A列所有数据 |
+| `sheet['4']` | 获取整行 | 第4行所有数据 |
+| `sheet['A:C']` | 获取多列 | A到C列 |
+| `sheet[2:4]` | 获取多行 | 第2到4行 |
 
-- 获取第A列的数据：`sheet["A"]`
-- 获取第4行的数据：`sheet["4"]`
+---
 
-上代码看看：
+#### 方法2：使用 `sheet.iter_rows()`（推荐）
+
+`iter_rows()` 是更灵活的方法，直接用行列数字指定范围：
 
 ```python
 from openpyxl import load_workbook
 
-filePath = r'D:\王者小学.xlsx'  # 文件路径
-workbook = load_workbook(filePath)  # 打开excel文件
+filePath = r'D:\王者小学.xlsx'
+workbook = load_workbook(filePath)
+sheet = workbook["花名册"]
 
-sheet = workbook["花名册"]  # 根据表名获取表格
+# 获取指定范围（第2-4行，第1-2列）
+for row in sheet.iter_rows(min_row=2, max_row=4, min_col=1, max_col=2):
+    for cell in row:
+        print(cell.value)
 
-print("第4行的数据：")
-cells = sheet["4"]  # 获取第4行的数据
-for i in cells:
-    print(i.value)
+# 获取所有数据
+for row in sheet.iter_rows():
+    for cell in row:
+        print(cell.value)
 
-print("第A列的数据：")
-cells = sheet["A"]  # 获取A列的数据
-for i in cells:
-    print(i.value)
-
-print("2-4行之间的数据：")
-cells = sheet[2:4]  # 获取第2行到第4行之间的数据
-for i in cells:
-    print(i)
-    for j in i:
-        print(j.value)
-
-print("A-C列之间的数据：")
-cells = sheet["A:C"]  # 获取第A列到第C列之间的数据
-for i in cells:
-    print(i)
-    for j in i:
-        print(j.value)
+# 直接获取值（不需要 .value）
+for row in sheet.iter_rows(min_row=2, max_row=4, values_only=True):
+    print(row)  # 直接是元组 ('1', '李白', '男')
 ```
 
-运行结果：
+**参数说明**：
 
-```
-第4行的数据：
-3
-后羿
-男
-第A列的数据：
-学号
-1
-2
-3
-4
-2-4行之间的数据：
-(<Cell '花名册'.A2>, <Cell '花名册'.B2>, <Cell '花名册'.C2>)
-1
-李白
-男
-(<Cell '花名册'.A3>, <Cell '花名册'.B3>, <Cell '花名册'.C3>)
-2
-甄姬
-女
-(<Cell '花名册'.A4>, <Cell '花名册'.B4>, <Cell '花名册'.C4>)
-3
-后羿
-男
-A-C列之间的数据：
-(<Cell '花名册'.A1>, <Cell '花名册'.A2>, <Cell '花名册'.A3>, <Cell '花名册'.A4>, <Cell '花名册'.A5>)
-学号
-1
-2
-3
-4
-(<Cell '花名册'.B1>, <Cell '花名册'.B2>, <Cell '花名册'.B3>, <Cell '花名册'.B4>, <Cell '花名册'.B5>)
-姓名
-李白
-甄姬
-后羿
-瑶
-(<Cell '花名册'.C1>, <Cell '花名册'.C2>, <Cell '花名册'.C3>, <Cell '花名册'.C4>, <Cell '花名册'.C5>)
-性别
-男
-女
-男
-女
-```
+| 参数 | 说明 | 默认值 |
+|------|------|--------|
+| `min_row` | 起始行 | 1 |
+| `max_row` | 结束行 | 最大行 |
+| `min_col` | 起始列 | 1 |
+| `max_col` | 结束列 | 最大列 |
+| `values_only` | 是否只返回值 | False |
 
-`sheet[]`获取单行单列的数据没有问题，如果获取多行或是多列呢？答案仍是通过`sheet[]`函数，格式如：
+> 💡 **推荐**：需要按行列遍历时，使用 `iter_rows()` 更直观！
 
-- 获取行1到行2之间的数据：`sheet["行1:行2"]`
-- 获取列1与列2之间的数据：`sheet["列1:列2"]`
+---
 
-注意行是由数字表示，列是由A-Z的字母组合表示。直接看代码看看：
+## ✏️ 修改和保存 Excel
+
+### 修改单元格的值
+
+修改单元格有两种方式：
 
 ```python
 from openpyxl import load_workbook
 
-filePath = r'D:\王者小学.xlsx'  # 文件路径
-workbook = load_workbook(filePath)  # 打开excel文件
+filePath = r'D:\王者小学.xlsx'
+workbook = load_workbook(filePath)
+sheet = workbook['花名册']
 
-sheet = workbook["花名册"]  # 根据表名获取表格
+# 方式1：直接赋值
+sheet["B2"] = '渣男教父'
 
-print("2-4行之间的数据：")
-cells = sheet[2:4]  # 获取第2行到第4行之间的数据
-for i in cells:
-    print(i)
-    for j in i:
-        print(j.value)
+# 方式2：通过 cell 对象赋值
+cell = sheet["B3"]
+cell.value = '蔡文姬'
 
-print("A-C列之间的数据：")
-cells = sheet["A:C"]  # 获取第A列到第C列之间的数据
-for i in cells:
-    print(i)
-    for j in i:
-        print(j.value)
-```
-
-![Image 9](./images/chapter10_09.png)
-
-运行结果：（同上）
-
-#### sheet.iter_rows()方法
-
-前面我们学习了用`sheet[]`方法获取单元格区域内数据，`sheet[]`很强大，既能获取单行或单列数据，又能获取多行或多列之间的数据，还能根据单元格坐标获取两个坐标内单元格的数据。
-
-但是`sheet[]`方法有一定的局限性，比如我需要第10行至第15行，第3列至第10列之间的全部单元格数据，我需要先把行列信息转化为字母数字坐标，那有没有一种方法直接就根据行列数据就能获取相应范围内的数据呢，答案当然是有的，那就是`sheet.iter_rows()`。
-
-我们看下它的定义：
-
-```python
-def iter_rows(self, min_row=None, max_row=None, min_col=None, max_col=None, values_only=False)
-```
-
-- min_row为最小行数索引
-- max_row为最大行数索引
-- min_col为最小列数索引
-- max_col为最大列数索引
-
-这里我们可以通过min_row,max_row,min_col,max_col来控制需要获取的行或列的索引，这四个值都是可以缺省的，如果全部缺省就是按行返回表的所有数据。这里需要注意索引最小值都是从1开始的。
-
-values_only 默认是False, 如果设置为True则直接输出值，不必利用单元格的value属性来输出值了。
-
-直接看代码看看：
-
-```python
-from openpyxl import load_workbook
-
-filePath = r'D:\王者小学.xlsx'  # 文件路径
-workbook = load_workbook(filePath)  # 打开excel文件
-
-sheet = workbook["花名册"]  # 根据表名获取表格
-
-# 按行获取范围内数据
-for i in sheet.iter_rows(min_row=2, max_row=4, min_col=1, max_col=2):
-    print(i)
-    for j in i:
-        print(j.value)
-
-# 按行获取所有数据
-for i in sheet.iter_rows():
-    print(i)
-    for j in i:
-        print(j.value)
-```
-
-运行结果：
-
-```
-(<Cell '花名册'.A2>, <Cell '花名册'.B2>)
-1
-李白
-(<Cell '花名册'.A3>, <Cell '花名册'.B3>)
-2
-甄姬
-(<Cell '花名册'.A4>, <Cell '花名册'.B4>)
-3
-后羿
-(<Cell '花名册'.A1>, <Cell '花名册'.B1>, <Cell '花名册'.C1>)
-学号
-姓名
-性别
-(<Cell '花名册'.A2>, <Cell '花名册'.B2>, <Cell '花名册'.C2>)
-1
-李白
-男
-(<Cell '花名册'.A3>, <Cell '花名册'.B3>, <Cell '花名册'.C3>)
-2
-甄姬
-女
-(<Cell '花名册'.A4>, <Cell '花名册'.B4>, <Cell '花名册'.C4>)
-3
-后羿
-男
-(<Cell '花名册'.A5>, <Cell '花名册'.B5>, <Cell '花名册'.C5>)
-4
-瑶
-女
-```
-
-利用`sheet.iter_rows(min_row=行索引1, max_row=行索引2, min_col=列索引1, max_col=列索引2)`可以获取设定的范围内的表格数据。当括号内传入参数都不设置的时候是按行返回表格中所有数据。
-
-那么我们只设置部分参数会怎么样呢？上代码看看:
-
-```python
-from openpyxl import load_workbook
-
-filePath = r'D:\王者小学.xlsx'  # 文件路径
-workbook = load_workbook(filePath)  # 打开excel文件
-
-sheet = workbook["花名册"]  # 根据表名获取表格
-
-print("不指定min_row:")
-# 按行获取值，缺省min_row
-for i in sheet.iter_rows(max_row=4, min_col=1, max_col=2):
-    print(i)
-    for j in i:
-        print(j.value)
-
-print("不指定max_row:")
-# 按行获取值,缺省max_row
-for i in sheet.iter_rows(min_row=2, min_col=1, max_col=2):
-    print(i)
-    for j in i:
-        print(j.value)
-
-print("不指定min_col:")
-# 按行获取值，缺省min_row
-for i in sheet.iter_rows(min_row=2, max_row=4, max_col=2):
-    print(i)
-    for j in i:
-        print(j.value)
-
-print("不指定max_col:")
-# 按行获取值,缺省max_row
-for i in sheet.iter_rows(min_row=2, max_row=4, min_col=1):
-    print(i)
-    for j in i:
-        print(j.value)
-```
-
-![Image 10](./images/chapter10_10.png)
-
-运行下看看：
-
-```
-不指定min_row:
-(<Cell '花名册'.A1>, <Cell '花名册'.B1>)
-学号
-姓名
-(<Cell '花名册'.A2>, <Cell '花名册'.B2>)
-1
-李白
-(<Cell '花名册'.A3>, <Cell '花名册'.B3>)
-2
-甄姬
-(<Cell '花名册'.A4>, <Cell '花名册'.B4>)
-3
-后羿
-不指定max_row:
-(<Cell '花名册'.A2>, <Cell '花名册'.B2>)
-1
-李白
-(<Cell '花名册'.A3>, <Cell '花名册'.B3>)
-2
-甄姬
-(<Cell '花名册'.A4>, <Cell '花名册'.B4>)
-3
-后羿
-(<Cell '花名册'.A5>, <Cell '花名册'.B5>)
-4
-瑶
-不指定min_col:
-(<Cell '花名册'.A2>, <Cell '花名册'.B2>)
-1
-李白
-(<Cell '花名册'.A3>, <Cell '花名册'.B3>)
-2
-甄姬
-(<Cell '花名册'.A4>, <Cell '花名册'.B4>)
-3
-后羿
-不指定max_col:
-(<Cell '花名册'.A2>, <Cell '花名册'.B2>, <Cell '花名册'.C2>)
-1
-李白
-男
-(<Cell '花名册'.A3>, <Cell '花名册'.B3>, <Cell '花名册'.C3>)
-2
-甄姬
-女
-(<Cell '花名册'.A4>, <Cell '花名册'.B4>, <Cell '花名册'.C4>)
-3
-后羿
-男
-```
-
-从结果可以看出：
-- 当缺省min_row时是默认取的最小行；
-- 当缺省max_row时是默认取的最大行；
-- 当缺省min_col时是默认取的最小列；
-- 当缺省max_col时是默认取的最大列；
-
-总结下就是：当设置的参数缺省时，如果缺省的参数是min_row或min_col则取最小行或是最小列，如果是max_row或是max_col则取最大行或最大列
-
-## 修改保存Excel
-
-### 修改单元格的值与保存Excel
-
-前面学习如何读取表中的数据，接下来我们要学习如何修改单元格的值。
-
-其实修改单元格的值很简单，我们前面学习了如何获取单元格，比如获取B2单元格：`sheet['B2']` ，我们要给它赋值只需要 `sheet['B2'] = 新的值` 就可以了。也可以先获取单元格，然后对单元格进行赋值。
-
-修改了值我们要保存下Excel, 这样保存才会生效，我们需要调用`workbook.save(filepath=保存路径)` 就可以保存修改了。我们上代码看看：
-
-```python
-from openpyxl import load_workbook
-
-filePath = r'D:\王者小学.xlsx'  # 文件路径
-workbook = load_workbook(filePath)  # 打开excel文件
-
-sheet = workbook['花名册']  # 根据表名获取表格
-sheet["B2"] = '渣男教父'  # 修改B2单元格的值为'渣男教父'
-
-cell = sheet["B3"]  # 获取B3单元格为cell
-cell.value = '蔡文姬'  # 修改cell的内容为 '蔡文姬'
-
-savePath = r'D:\王者小学2.xlsx'
-workbook.save(savePath)  # 另存为D:
+# 保存文件
+workbook.save(r'D:\王者小学2.xlsx')
 ```
 
 ![Image 11](./images/chapter10_11.png)
 
-运行后我们到D盘根目录下看看，果然多了一个王者小学2.xlsx文件
-
-我们打开王者小学2.xlsx看一下，果然B2，B3单元格都改成了相应的数据。我们对比下：
+**对比效果**：
 
 ![Image 12](./images/chapter10_12.png)
 
 ![Image 13](./images/chapter10_13.png)
 
-这里需要注意两点：
-1. 如果文件保存路径savePath不是当前打开excel的路径时是修改并另存为一个新文件，如果savePath是打开execl的路径则是直接修改并保存源文件了。
-2. 保存之前必须保证你要保存的文件时关闭的，否则会保存失败。
+> ⚠️ **重要提醒**：
+> 1. **必须保存**：修改后调用 `workbook.save(路径)` 才能生效
+> 2. **另存为**：如果路径不同，会创建新文件；路径相同则覆盖原文件
+> 3. **文件关闭**：保存前确保 Excel 文件已关闭，否则会报错
 
-### 向表格中插入行数据
+---
 
-前面学习了如何修改单元格的内容，一个个修改太慢了，有没有办法直接插入一堆数据呢。这个肯定是有的，现在我们就来学习下如何在表格中插入行数据的方法-`append()`。
+### 批量插入数据
 
-`append()`会在表格已有的数据后面增添你要加入的数据，注意它是按行插入的。
-
-我们上代码看看：
+使用 `append()` 方法可以在表格末尾批量插入数据：
 
 ```python
 from openpyxl import load_workbook
 
-filePath = r'D:\王者小学.xlsx'  # 文件路径
-workbook = load_workbook(filePath)  # 打开excel文件
+filePath = r'D:\王者小学.xlsx'
+workbook = load_workbook(filePath)
+sheet = workbook['花名册']
 
-sheet = workbook['花名册']  # 根据表名获取表格
-
+# 要插入的数据（列表的列表）
 data = [
     ['5', '安琪拉', "女"],
     ['6', '荆轲', "女"],
     ['7', '夏侯惇', "男"],
 ]
 
+# 逐行追加
 for row in data:
-    sheet.append(row)  # 按行插入到表格数据最后面
+    sheet.append(row)
 
-workbook.save(filePath)  # 保存到源文件
+workbook.save(filePath)
+print("✅ 数据插入成功！")
 ```
 
 ![Image 14](./images/chapter10_14.png)
 
-运行后我们打开王者小学.xlsx，新的数据果然已经插入到以前数据的后面。
+> 💡 **应用场景**：
+> - 爬虫数据存储
+> - 批量导入数据
+> - 日志记录
+> - 报表生成
 
-`append()`这个操作是很有用的，比如以后你用爬虫爬到一堆的数据，都可以用该方式保存到excel文件中。
+---
 
-## 实战一-合并多个Excel中数据
+## 🎯 实战项目：合并多个 Excel 文件
 
-之前我们已经学习了如何读取和写入Execl数据，今天我们来用一个实例来进行表格的合并。如下是2021年4个季度的销售数据明细。我们把它放在了D盘2021年销售明细的文件夹下。
+### 项目背景
+
+假设你是公司的数据分析师，需要将2021年4个季度的销售数据合并成一个总表。每个季度的数据保存在单独的 Excel 文件中：
 
 ![Image 15](./images/chapter10_15.png)
+
+### 实现思路
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                   数据合并流程图                          │
+├─────────────────────────────────────────────────────────┤
+│                                                         │
+│  📁 2021年销售明细/                                      │
+│  ├── 📄 一季度.xlsx  ──┐                                │
+│  ├── 📄 二季度.xlsx  ──┼──→  🐍 Python 脚本 ──→ 📊 汇总表 │
+│  ├── 📄 三季度.xlsx  ──┤         读取所有文件              │
+│  └── 📄 四季度.xlsx  ──┘         提取数据                  │
+│                                  合并保存                 │
+│                                                         │
+└─────────────────────────────────────────────────────────┘
+```
+
+### 核心代码
+
+```python
+import os
+from openpyxl import load_workbook, Workbook
+
+# 数据文件夹路径
+data_dir = r'D:\2021年销售明细'
+
+# 创建新的工作簿保存汇总数据
+summary_wb = Workbook()
+summary_sheet = summary_wb.active
+summary_sheet.title = "2021年销售汇总"
+
+# 写入表头
+headers = ['季度', '产品', '销量', '销售额']
+summary_sheet.append(headers)
+
+# 遍历所有Excel文件
+for filename in os.listdir(data_dir):
+    if filename.endswith('.xlsx'):
+        # 提取季度信息
+        quarter = filename.replace('.xlsx', '')
+        
+        # 打开文件读取数据
+        file_path = os.path.join(data_dir, filename)
+        wb = load_workbook(file_path)
+        sheet = wb.active
+        
+        # 读取数据（跳过表头）
+        for row in sheet.iter_rows(min_row=2, values_only=True):
+            # 添加季度信息
+            row_data = [quarter] + list(row)
+            summary_sheet.append(row_data)
+        
+        wb.close()
+
+# 保存汇总文件
+summary_wb.save(r'D:\2021年销售汇总.xlsx')
+print("✅ 数据合并完成！")
+```
+
+> 🎉 **恭喜你！** 至此，你已经掌握了 Python 操作 Excel 的核心技能！
+
+---
+
+## 📝 文档总结
+
+### 一、核心知识点回顾
+
+#### 1. Excel 基础概念
+
+```
+📒 工作簿 (Workbook) → 一个 Excel 文件
+    └── 📄 工作表 (Sheet)
+            ├── 📊 行 (Row) - 数字 1, 2, 3...
+            ├── 📊 列 (Column) - 字母 A, B, C...
+            └── 🔲 单元格 (Cell) - 坐标如 B4
+```
+
+**⚠️ 重要**：Excel 索引从 **1** 开始，不是 0！
+
+#### 2. openpyxl 核心操作
+
+| 操作 | 代码 | 说明 |
+|------|------|------|
+| **打开文件** | `load_workbook('文件.xlsx')` | 加载已存在的文件 |
+| **获取工作表** | `wb['表名']` / `wb.worksheets[0]` | 获取指定工作表 |
+| **获取单元格** | `sheet['B2']` / `sheet.cell(row=2, column=2)` | 两种获取方式 |
+| **获取值** | `cell.value` | 获取单元格的值 |
+| **修改值** | `sheet['B2'] = '新值'` | 直接赋值修改 |
+| **批量插入** | `sheet.append([数据列表])` | 在末尾添加一行 |
+| **保存文件** | `wb.save('路径.xlsx')` | 保存修改 |
+
+#### 3. 区域数据获取方法对比
+
+| 方法 | 优点 | 缺点 |
+|------|------|------|
+| `sheet['A1:C4']` | 直观，用坐标 | 需要转换行列到坐标 |
+| `sheet.iter_rows()` | 直接用行列数字 | 稍微复杂一点 |
+
+**推荐**：简单场景用 `sheet[]`，复杂遍历用 `iter_rows()`
+
+#### 4. 完整操作流程
+
+```python
+from openpyxl import load_workbook
+
+# 1. 打开文件
+wb = load_workbook('数据.xlsx')
+
+# 2. 获取工作表
+sheet = wb['Sheet1']
+
+# 3. 读取/修改数据
+value = sheet['A1'].value
+sheet['B2'] = '新数据'
+
+# 4. 批量插入
+sheet.append(['数据1', '数据2', '数据3'])
+
+# 5. 保存文件
+wb.save('数据.xlsx')
+```
+
+---
+
+### 二、常见应用场景
+
+1. **数据整理**：批量处理多个 Excel 文件
+2. **报表生成**：自动从数据库导出数据到 Excel
+3. **数据清洗**：读取 Excel 数据，处理后保存
+4. **爬虫存储**：将爬取的数据保存到 Excel
+5. **办公自动化**：自动填充模板、生成报告
+
+---
+
+### 三、学习建议
+
+1. **多练习**：Excel 操作熟能生巧，多写代码
+2. **注意索引**：时刻记住 Excel 从 1 开始计数
+3. **及时保存**：修改后记得调用 `save()`
+4. **关闭文件**：操作前确保 Excel 文件已关闭
+5. **结合 pandas**：大数据量时考虑使用 pandas
+
+---
+
+### 四、下篇预告
+
+下一篇我们将学习：
+- 网络编程基础（HTTP 协议）
+- 使用 requests 库发送网络请求
+- API 接口调用
+- 爬虫基础
+
+掌握 Excel 操作 + 网络请求，你就可以实现数据采集 → 处理 → 存储的完整流程了！
+
+---
+
+## 🎮 动手练一练
+
+光看不练假把式！下面几道题目帮你巩固今天学到的知识。
+
+### 选择题
+
+**1. 在 Excel 中，单元格 B3 表示？**
+- A. 第 2 行第 3 列
+- B. 第 3 行第 2 列
+- C. 第 2 列第 3 行
+- D. 第 3 列第 2 行
+
+<details>
+<summary>💡 答案解析（点击展开）</summary>
+
+**正确答案：B**
+
+**详细解析**：
+- Excel 单元格坐标的格式是 **列字母 + 行数字**
+- **B** 表示第 2 列（A=1, B=2, C=3...）
+- **3** 表示第 3 行
+- 所以 **B3** = 第 3 行第 2 列
+
+**记忆技巧**：
+- 先列后行，字母在前数字在后
+- 类比坐标系：x 轴（列）在前，y 轴（行）在后
+
+**代码对应**：
+```python
+# B3 的两种获取方式
+sheet['B3']                    # 坐标法
+sheet.cell(row=3, column=2)    # 行列法（第3行第2列）
+```
+
+</details>
+
+---
+
+**2. 使用 openpyxl 打开 Excel 文件，应该使用哪个函数？**
+- A. `open_workbook()`
+- B. `load_workbook()`
+- C. `read_excel()`
+- D. `open_excel()`
+
+<details>
+<summary>💡 答案解析（点击展开）</summary>
+
+**正确答案：B**
+
+**详细解析**：
+- 选项 A `open_workbook()`：不存在这个函数
+- 选项 B `load_workbook()`：**正确**，openpyxl 中用于加载已有文件的函数
+- 选项 C `read_excel()`：这是 pandas 库的函数，不是 openpyxl 的
+- 选项 D `open_excel()`：不存在这个函数
+
+**代码示例**：
+```python
+from openpyxl import load_workbook
+
+# 正确用法
+wb = load_workbook('数据.xlsx')
+
+# 错误用法 ❌
+wb = open_workbook('数据.xlsx')  # 函数不存在
+wb = read_excel('数据.xlsx')     # 这是 pandas 的函数
+```
+
+**易混淆点**：
+- openpyxl 用 `load_workbook()`
+- pandas 用 `read_excel()`
+- xlrd 用 `open_workbook()`
+
+</details>
+
+---
+
+**3. 以下代码执行后，`value` 的值是什么？**
+```python
+from openpyxl import load_workbook
+wb = load_workbook('王者小学.xlsx')
+sheet = wb['花名册']
+value = sheet.cell(row=2, column=2).value
+```
+- A. 学号
+- B. 1
+- C. 李白
+- D. 男
+
+<details>
+<summary>💡 答案解析（点击展开）</summary>
+
+**正确答案：C**
+
+**详细解析**：
+- `sheet.cell(row=2, column=2)` 获取第 2 行第 2 列的单元格
+- 第 2 行第 2 列对应坐标 **B2**
+- 根据【花名册】表格内容：
+  - 第 1 行是表头：学号、姓名、性别
+  - 第 2 行是：1、李白、男
+- 所以第 2 行第 2 列的值是 **"李白"**
+
+**表格结构回顾**：
+```
+     A      B      C
+1   学号   姓名   性别
+2    1     李白    男
+3    2     甄姬    女
+4    3     后羿    男
+```
+
+**对应关系**：
+- `cell(row=2, column=2)` = B2 = "李白"
+- `cell(row=2, column=1)` = A2 = "1"
+- `cell(row=1, column=2)` = B1 = "姓名"
+
+</details>
+
+---
+
+**4. 使用 `sheet.append()` 方法时，传入的参数应该是？**
+- A. 单个值，如 `'张三'`
+- B. 字典，如 `{'name': '张三', 'age': 20}`
+- C. 列表，如 `['5', '张三', '男']`
+- D. 元组，如 `('5', '张三', '男')`
+
+<details>
+<summary>💡 答案解析（点击展开）</summary>
+
+**正确答案：C**
+
+**详细解析**：
+- 选项 A 错误：`append()` 需要传入一行数据，单个值不够
+- 选项 B 错误：`append()` 不接受字典类型
+- 选项 C **正确**：`append()` 接受**列表**作为参数，表示一行数据
+- 选项 D 虽然也能工作，但官方文档和最佳实践推荐用**列表**
+
+**代码示例**：
+```python
+# ✅ 正确：传入列表
+sheet.append(['5', '张三', '男'])
+
+# ✅ 也能工作，但推荐用列表
+sheet.append(('5', '张三', '男'))
+
+# ❌ 错误：单个值
+sheet.append('张三')
+
+# ❌ 错误：字典
+sheet.append({'name': '张三'})
+```
+
+**批量插入示例**：
+```python
+data = [
+    ['5', '安琪拉', '女'],
+    ['6', '荆轲', '女'],
+    ['7', '夏侯惇', '男'],
+]
+
+for row in data:
+    sheet.append(row)  # row 是列表
+```
+
+</details>
+
+---
+
+### 编程题
+
+**1. 学生成绩统计程序**
+
+假设你有一个【成绩单】表格，包含以下数据：
+
+| 姓名 | 语文 | 数学 | 英语 |
+|------|------|------|------|
+| 李白 | 85 | 90 | 88 |
+| 甄姬 | 92 | 88 | 95 |
+| 后羿 | 78 | 85 | 80 |
+| 瑶 | 95 | 92 | 90 |
+
+**要求**：
+1. 读取成绩单数据
+2. 计算每个学生的总分和平均分
+3. 将结果写入新的列（总分、平均分）
+4. 找出最高分的学生并打印
+
+<details>
+<summary>🔑 参考答案与解析（点击展开）</summary>
+
+**解题思路**：
+1. 打开 Excel 文件，获取【成绩单】工作表
+2. 使用 `iter_rows()` 读取数据（跳过表头）
+3. 遍历每行数据，计算总分和平均分
+4. 将计算结果写入新列
+5. 遍历找出最高分学生
+6. 保存文件
+
+**代码实现**：
+
+```python
+from openpyxl import load_workbook
+
+# 打开文件
+filePath = r'D:\王者小学.xlsx'
+wb = load_workbook(filePath)
+sheet = wb['成绩单']
+
+print("🚀 开始处理成绩数据...\n")
+
+# 添加表头
+sheet['E1'] = '总分'
+sheet['F1'] = '平均分'
+
+# 存储学生成绩信息
+students = []
+
+# 读取数据并计算（从第2行开始，跳过表头）
+for row in sheet.iter_rows(min_row=2, max_row=5, values_only=True):
+    name, chinese, math, english = row[0], row[1], row[2], row[3]
+    
+    # 计算总分和平均分
+    total = chinese + math + english
+    average = total / 3
+    
+    # 保存学生信息
+    students.append({
+        'name': name,
+        'total': total,
+        'average': average
+    })
+    
+    print(f"📊 {name}: 语文{chinese} 数学{math} 英语{english} → 总分{total} 平均分{average:.2f}")
+
+# 将结果写回Excel
+for i, student in enumerate(students, start=2):
+    sheet.cell(row=i, column=5).value = student['total']      # E列
+    sheet.cell(row=i, column=6).value = round(student['average'], 2)  # F列
+
+# 找出最高分学生
+top_student = max(students, key=lambda x: x['total'])
+print(f"\n🏆 最高分学生: {top_student['name']}")
+print(f"   总分: {top_student['total']}")
+print(f"   平均分: {top_student['average']:.2f}")
+
+# 保存文件
+wb.save(filePath)
+print(f"\n✅ 处理完成，结果已保存到 {filePath}")
+```
+
+**运行结果**：
+```
+🚀 开始处理成绩数据...
+
+📊 李白: 语文85 数学90 英语88 → 总分263 平均分87.67
+📊 甄姬: 语文92 数学88 英语95 → 总分275 平均分91.67
+📊 后羿: 语文78 数学85 英语80 → 总分243 平均分81.00
+📊 瑶: 语文95 数学92 英语90 → 总分277 平均分92.33
+
+🏆 最高分学生: 瑶
+   总分: 277
+   平均分: 92.33
+
+✅ 处理完成，结果已保存到 D:\王者小学.xlsx
+```
+
+**知识点总结**：
+- `iter_rows(values_only=True)` 直接获取值
+- `sheet.cell(row, column).value` 写入数据
+- `max()` 函数配合 `key` 参数找出最大值
+- 注意行号从 2 开始（跳过表头）
+
+**进阶挑战**：
+- 添加排名列
+- 按总分降序排列
+- 计算各科班级平均分
+- 将结果导出为新文件
+
+</details>
+
+---
+
+**2. 多文件数据汇总**
+
+假设你有 3 个班级的成绩文件：
+- 一班.xlsx
+- 二班.xlsx
+- 三班.xlsx
+
+每个文件结构相同：
+| 姓名 | 语文 | 数学 | 英语 |
+
+**要求**：
+1. 读取所有班级的数据
+2. 合并到一个新的 Excel 文件中
+3. 添加"班级"列标识数据来源
+4. 计算每个班级的平均成绩
+
+<details>
+<summary>🔑 参考答案与解析（点击展开）</summary>
+
+**解题思路**：
+1. 导入必要的库（os、openpyxl）
+2. 创建新的工作簿用于保存汇总数据
+3. 遍历数据文件夹中的所有 .xlsx 文件
+4. 对每个文件：
+   - 提取班级名称（从文件名）
+   - 读取数据
+   - 添加班级标识
+   - 追加到汇总表
+5. 计算各班级平均分
+6. 保存汇总文件
+
+**代码实现**：
+
+```python
+import os
+from openpyxl import load_workbook, Workbook
+
+def merge_class_data(data_dir, output_file):
+    """
+    合并多个班级的成绩数据
+    
+    参数:
+        data_dir: 数据文件夹路径
+        output_file: 输出文件路径
+    """
+    # 创建新的工作簿
+    wb = Workbook()
+    sheet = wb.active
+    sheet.title = "成绩汇总"
+    
+    # 写入表头
+    headers = ['班级', '姓名', '语文', '数学', '英语', '总分']
+    sheet.append(headers)
+    
+    # 存储各班统计数据
+    class_stats = {}
+    
+    print("🚀 开始合并数据...\n")
+    
+    # 遍历数据文件夹
+    for filename in os.listdir(data_dir):
+        if filename.endswith('.xlsx'):
+            # 提取班级名称
+            class_name = filename.replace('.xlsx', '')
+            print(f"📂 正在处理: {filename}")
+            
+            # 打开文件
+            file_path = os.path.join(data_dir, filename)
+            wb_source = load_workbook(file_path)
+            source_sheet = wb_source.active
+            
+            # 初始化班级统计
+            class_stats[class_name] = {
+                'count': 0,
+                'chinese_sum': 0,
+                'math_sum': 0,
+                'english_sum': 0
+            }
+            
+            # 读取数据（跳过表头）
+            for row in source_sheet.iter_rows(min_row=2, values_only=True):
+                name, chinese, math, english = row
+                total = chinese + math + english
+                
+                # 添加到汇总表
+                sheet.append([class_name, name, chinese, math, english, total])
+                
+                # 更新统计
+                class_stats[class_name]['count'] += 1
+                class_stats[class_name]['chinese_sum'] += chinese
+                class_stats[class_name]['math_sum'] += math
+                class_stats[class_name]['english_sum'] += english
+            
+            wb_source.close()
+    
+    # 保存汇总数据
+    wb.save(output_file)
+    
+    # 打印统计结果
+    print("\n" + "=" * 60)
+    print("📊 各班平均成绩统计")
+    print("=" * 60)
+    print(f"{'班级':<10}{'人数':<8}{'语文':<8}{'数学':<8}{'英语':<8}")
+    print("-" * 60)
+    
+    for class_name, stats in class_stats.items():
+        count = stats['count']
+        avg_chinese = stats['chinese_sum'] / count
+        avg_math = stats['math_sum'] / count
+        avg_english = stats['english_sum'] / count
+        
+        print(f"{class_name:<10}{count:<8}{avg_chinese:<8.2f}{avg_math:<8.2f}{avg_english:<8.2f}")
+    
+    print("=" * 60)
+    print(f"\n✅ 数据合并完成！")
+    print(f"📁 汇总文件: {output_file}")
+    print(f"📊 总记录数: {sum(s['count'] for s in class_stats.values())}")
+
+
+# 使用示例
+if __name__ == '__main__':
+    data_directory = r'D:\班级成绩'  # 数据文件夹
+    output_path = r'D:\成绩汇总.xlsx'  # 输出文件
+    
+    merge_class_data(data_directory, output_path)
+```
+
+**运行结果**：
+```
+🚀 开始合并数据...
+
+📂 正在处理: 一班.xlsx
+📂 正在处理: 二班.xlsx
+📂 正在处理: 三班.xlsx
+
+============================================================
+📊 各班平均成绩统计
+============================================================
+班级      人数    语文    数学    英语    
+------------------------------------------------------------
+一班      45      85.50   88.20   86.70   
+二班      42      87.30   85.60   89.10   
+三班      44      84.80   90.20   87.50   
+============================================================
+
+✅ 数据合并完成！
+📁 汇总文件: D:\成绩汇总.xlsx
+📊 总记录数: 131
+```
+
+**知识点总结**：
+- `os.listdir()` 遍历文件夹
+- `os.path.join()` 拼接路径
+- `Workbook()` 创建新工作簿
+- 批量处理多个文件
+- 数据统计和计算
+
+**进阶挑战**：
+- 添加年级排名
+- 找出各班第一名
+- 生成图表可视化
+- 添加数据验证
+
+</details>
